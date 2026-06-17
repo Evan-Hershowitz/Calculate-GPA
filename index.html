@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPA Calculator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f3;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 10px;
+      border: 0.5px solid #e0e0e0;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+
+    .table-card {
+      background: #fff;
+      border: 0.5px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .table-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.5fr 36px;
+      padding: 8px 12px;
+      background: #f9f9f7;
+      border-bottom: 0.5px solid #e0e0e0;
+    }
+
+    .table-header span {
+      font-size: 12px;
+      color: #888;
+      font-weight: 500;
+    }
+
+    .course-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.5fr 36px;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 0.5px solid #f0f0f0;
+    }
+
+    .course-row:last-child { border-bottom: none; }
+
+    .course-row input[type="text"] {
+      font-size: 14px;
+      border: none;
+      background: transparent;
+      outline: none;
+      color: #1a1a1a;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .course-row input[type="number"] {
+      font-size: 14px;
+      border: none;
+      background: transparent;
+      outline: none;
+      color: #1a1a1a;
+      width: 60px;
+      font-family: inherit;
+    }
+
+    .course-row select {
+      font-size: 14px;
+      border: none;
+      background: transparent;
+      outline: none;
+      color: #1a1a1a;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .del-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #aaa;
+      font-size: 16px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .del-btn:hover {
+      background: #fff0f0;
+      color: #c0392b;
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      background: transparent;
+      border: 0.5px dashed #ccc;
+      border-radius: 10px;
+      color: #888;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 1rem;
+    }
+
+    .add-btn:hover {
+      background: #f0f0f0;
+      color: #444;
+    }
+
+    details {
+      margin-top: 0.5rem;
+    }
+
+    summary {
+      font-size: 13px;
+      color: #888;
+      cursor: pointer;
+      padding: 8px 0;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    .note {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.6;
+      padding: 8px 0 0;
+    }
+
+    @media (max-width: 480px) {
+      .stat-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .stat-value { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>GPA Calculator</h1>
+    <p class="subtitle">Enter your courses, credits, and grades below.</p>
+
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-label">Cumulative GPA</div>
+        <div class="stat-value" id="cum-gpa">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total credits</div>
+        <div class="stat-value" id="total-credits">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Quality points</div>
+        <div class="stat-value" id="quality-pts">0</div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span>Course</span>
+        <span>Credits</span>
+        <span>Grade</span>
+        <span></span>
+      </div>
+      <div id="course-rows"></div>
+    </div>
+
+    <button class="add-btn" onclick="addRow()">
+      <i class="ti ti-plus" aria-hidden="true"></i> Add course
+    </button>
+
+    <details>
+      <summary>&#9432; LSAC GPA note</summary>
+      <p class="note">
+        LSAC recalculates GPA using all attempted undergraduate coursework and their own grade conversion table.
+        A+ grades are counted as 4.0 (not 4.33). Withdrawals, repeated courses, and graduate credits are handled differently.
+        This calculator uses the standard 4.0 scale.
+      </p>
+    </details>
+  </div>
+
+  <script>
+    const gradeMap = {
+      'A+': 4.0, 'A': 4.0, 'A-': 3.7,
+      'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+      'C+': 2.3, 'C': 2.0, 'C-': 1.7,
+      'D+': 1.3, 'D': 1.0, 'D-': 0.7,
+      'F': 0.0
+    };
+    const grades = Object.keys(gradeMap);
+    let rows = [];
+    let nextId = 0;
+
+    function addRow(name = '', credits = 3, grade = 'A') {
+      const id = nextId++;
+      rows.push({ id, name, credits, grade });
+      renderRows();
+      recalc();
+    }
+
+    function removeRow(id) {
+      rows = rows.filter(r => r.id !== id);
+      renderRows();
+      recalc();
+    }
+
+    function renderRows() {
+      const container = document.getElementById('course-rows');
+      container.innerHTML = rows.map(r => `
+        <div class="course-row" data-id="${r.id}">
+          <input type="text" placeholder="Course name" value="${r.name}"
+            onchange="updateRow(${r.id}, 'name', this.value)" />
+          <input type="number" min="0" max="6" step="0.5" value="${r.credits}"
+            onchange="updateRow(${r.id}, 'credits', parseFloat(this.value) || 0)" />
+          <select onchange="updateRow(${r.id}, 'grade', this.value)">
+            ${grades.map(g => `<option value="${g}" ${g === r.grade ? 'selected' : ''}>${g}</option>`).join('')}
+          </select>
+          <button class="del-btn" onclick="removeRow(${r.id})" aria-label="Remove row">
+            <i class="ti ti-x" aria-hidden="true"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function updateRow(id, field, value) {
+      const row = rows.find(r => r.id === id);
+      if (row) { row[field] = value; recalc(); }
+    }
+
+    function recalc() {
+      let totalCredits = 0, totalPoints = 0;
+      for (const r of rows) {
+        const pts = (gradeMap[r.grade] ?? 0) * r.credits;
+        totalCredits += r.credits;
+        totalPoints += pts;
+      }
+      const gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '—';
+      document.getElementById('cum-gpa').textContent = gpa;
+      document.getElementById('total-credits').textContent = totalCredits % 1 === 0 ? totalCredits : totalCredits.toFixed(1);
+      document.getElementById('quality-pts').textContent = totalPoints.toFixed(2);
+    }
+
+    addRow('', 3, 'A');
+    addRow('', 3, 'A');
+    addRow('', 3, 'B+');
+    recalc();
+  </script>
+</body>
+</html>
